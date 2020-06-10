@@ -1,0 +1,34 @@
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
+PREFIX eli: <http://data.europa.eu/eli/ontology#>
+
+DELETE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?decision a besluit:Besluit .
+    ?decision ext:beslissingsfiche ?bf .
+    ?decision eli:title_short ?tit .
+    ?decision besluitvorming:gearchiveerd ?arch .
+    ?decision besluitvorming:stuknummerVP ?svp .
+    ?decision besluitvorming:stuknummerVR ?svr .
+  }
+}
+INSERT {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?decision a besluit:BehandelingVanAgendapunt . 
+    ?bf besluitvorming:beschrijft ?decision .
+  }
+}
+WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?decision a besluit:Besluit .
+    OPTIONAL { ?decision ext:beslissingsfiche ?bf }
+    OPTIONAL { ?decision eli:title_short ?tit }
+    OPTIONAL { ?decision besluitvorming:gearchiveerd ?arch }
+    OPTIONAL { ?decision besluitvorming:stuknummerVP ?svp }
+    OPTIONAL { ?decision besluitvorming:stuknummerVR ?svr }
+  }
+  VALUES ?decision {
+    # VALUES_PLACEHOLDER
+  }
+}

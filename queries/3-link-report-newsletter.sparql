@@ -1,0 +1,31 @@
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
+PREFIX dbpedia: <http://dbpedia.org/ontology/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+DELETE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?ps ext:procedurestapHeeftBesluit ?behandeling .
+    ?ps prov:generated ?nli .
+  }
+}
+INSERT {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?behandeling besluitvorming:heeftOnderwerp ?ap . # TODO: Ook stappen die 2 maal geagendeerd zijn (uitstel) hebben nu zelfde behandeling
+    ?behandeling prov:generated ?nli . # More specific predicate than generates?
+  }
+}
+WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?behandeling a besluit:BehandelingVanAgendapunt . 
+    ?ap a besluit:Agendapunt .
+    ?ps a dbpedia:UnitOfWork ;
+      besluitvorming:isGeagendeerdVia ?ap ;
+      ext:procedurestapHeeftBesluit ?behandeling .
+    OPTIONAL { ?ps prov:generated ?nli }
+  }
+  VALUES ?behandeling {
+    # VALUES_PLACEHOLDER
+  }
+}

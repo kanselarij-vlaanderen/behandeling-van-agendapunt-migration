@@ -1,0 +1,8 @@
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+
+SELECT ?decision WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?decision a besluit:Besluit .
+  }
+}
+LIMIT # LIMIT_PLACEHOLDER

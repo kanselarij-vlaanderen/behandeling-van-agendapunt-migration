@@ -1,0 +1,12 @@
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
+
+SELECT ?agendaItem WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaItem a besluit:Agendapunt ;
+      ext:wordtGetoondAlsMededeling "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+    FILTER NOT EXISTS { ?ps besluitvorming:isGeagendeerdVia ?agendaItem }
+  }
+}
+LIMIT # LIMIT_PLACEHOLDER
