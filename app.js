@@ -62,6 +62,25 @@ async function createTreatmentsBatch (batchSize, graph) {
   return mededelingenUris;
 }
 
+async function generateNliForAnnouncement (announcement) {
+  const nliQueryString = queries.constructSelectNliForAnnouncementsQuery(announcement, KANSELARIJ_GRAPH);
+  const announcementInfo = parseSparqlResults(await query(nliQueryString))[0];
+  const nliUuid = uuid();
+  const nliUri = NLI_BASE_URI + nliUuid;
+  const title = announcementInfo.shortTitle || announcementInfo.title;
+  const content = announcementInfo.title || '';
+  // TODO KAS-1420 : title & content will have same "content" when shortTitle doesn't exist and title does.
+  const nliTriples = [
+    { s: sparqlEscapeUri(nliUri), p: 'a', o: sparqlEscapeUri('http://data.vlaanderen.be/ns/besluitvorming#NieuwsbriefInfo') },
+    { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/core/uuid'), o: sparqlEscapeString(nliUuid) },
+    { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://purl.org/dc/terms/title'), o: sparqlEscapeString(title) },
+    { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/ext/htmlInhoud'), o: sparqlEscapeString(content) }
+    // TODO KAS-1420 : What about "priority" and "category"(nota/mededeling)? See Valvas-export-service
+  ];
+  const queryString = queries.constructInsertTriplesQuery(KANSELARIJ_GRAPH, nliTriples);
+  await update(queryString);
+}
+
 // Begin execution here
 
 const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) || 200;
@@ -104,22 +123,7 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
   const mededelingenUris = announcementsWithoutNli.map((r) => r.agendaItem);
   for (const announcement of mededelingenUris) {
     console.log(`Running for <${announcement}>`);
-    const nliQueryString = queries.constructSelectNliForAnnouncementsQuery(announcement, KANSELARIJ_GRAPH);
-    const announcementInfo = parseSparqlResults(await query(nliQueryString))[0];
-    const nliUuid = uuid();
-    const nliUri = NLI_BASE_URI + nliUuid;
-    const title = announcementInfo.shortTitle || announcementInfo.title;
-    const content = announcementInfo.title || '';
-    // TODO KAS-1420 : title & content will have same "content" when shortTitle doesn't exist and title does.
-    const nliTriples = [
-      { s: sparqlEscapeUri(nliUri), p: 'a', o: sparqlEscapeUri('http://data.vlaanderen.be/ns/besluitvorming#NieuwsbriefInfo') },
-      { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/core/uuid'), o: sparqlEscapeString(nliUuid) },
-      { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://purl.org/dc/terms/title'), o: sparqlEscapeString(title) },
-      { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/ext/htmlInhoud'), o: sparqlEscapeString(content) }
-      // TODO KAS-1420 : What about "priority" and "category"(nota/mededeling)? See Valvas-export-service
-    ];
-    const queryString = queries.constructInsertTriplesQuery(KANSELARIJ_GRAPH, nliTriples);
-    await update(queryString);
+    await generateNliForAnnouncement(announcement);
   }
   // TODO: Attach nli to other
   // TODO: distribute new "Newsletterinfo" to other graphs
