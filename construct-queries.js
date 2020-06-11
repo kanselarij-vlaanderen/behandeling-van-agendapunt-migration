@@ -30,8 +30,72 @@ function constructLinkReportNewsletterQuery (graph, decisionUris) {
   return query;
 }
 
+function constructListMededelingenQuery (batchSize, graph) {
+  const p = path.resolve(__dirname, './queries/4-list-mededelingen-without-subcase.sparql');
+  let query = fs.readFileSync(p, { encoding: 'utf8' });
+  query = query.replace('# LIMIT_PLACEHOLDER', batchSize);
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  return query;
+}
+
+function constructAttachTreatmentToOtherItemVersionsQuery (graph, agendaItemUris) {
+  const p = path.resolve(__dirname, './queries/5-attach-treatment-to-other-versions.sparql');
+  let query = fs.readFileSync(p, { encoding: 'utf8' });
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  query = query.replaceAll('# AGENDAITEM_PLACEHOLDER', agendaItemUris.map(sparqlEscapeUri).join('\n    '));
+  return query;
+}
+
+function constructInsertTriplesQuery (graph, triples) {
+  let query = `
+  PREFIX pav: <http://purl.org/pav/>
+  PREFIX dct: <http://purl.org/dc/terms/>
+
+  INSERT DATA {
+    GRAPH # GRAPH_PLACEHOLDER {
+  `;
+  for (const t of triples) {
+    query += `    ${t.s} ${t.p} ${t.o} .\n`;
+  }
+  query += `
+    }
+  }
+  `;
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  return query;
+}
+
+function constructAttachExistingNliQuery (graph) {
+  const p = path.resolve(__dirname, './queries/6-attach-existing-newsletterinfo-to-behandeling.sparql');
+  let query = fs.readFileSync(p, { encoding: 'utf8' });
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  return query;
+}
+
+function constructSelectAnnouncementsWithoutNliQuery (graph) {
+  const p = path.resolve(__dirname, './queries/7-select-announcements-without-nli.sparql');
+  let query = fs.readFileSync(p, { encoding: 'utf8' });
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  // query = query.replaceAll('# LIMIT_PLACEHOLDER', batchSize);
+  return query;
+}
+
+function constructSelectNliForAnnouncementsQuery (agendaItemUri, graph) {
+  const p = path.resolve(__dirname, './queries/8-select-newsletterinfo-for-announcements.sparql');
+  let query = fs.readFileSync(p, { encoding: 'utf8' });
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  query = query.replaceAll('# AGENDAITEM_PLACEHOLDER', sparqlEscapeUri(agendaItemUri));
+  return query;
+}
+
 export {
   constructListDecisionsQuery,
   constructDecisionToTreatmentQuery,
-  constructLinkReportNewsletterQuery
+  constructLinkReportNewsletterQuery,
+  constructListMededelingenQuery,
+  constructAttachTreatmentToOtherItemVersionsQuery,
+  constructInsertTriplesQuery,
+  constructAttachExistingNliQuery,
+  constructSelectAnnouncementsWithoutNliQuery,
+  constructSelectNliForAnnouncementsQuery
 };

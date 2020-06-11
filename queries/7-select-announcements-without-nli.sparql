@@ -1,0 +1,22 @@
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+SELECT DISTINCT ?agendaItem
+WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agenda a besluitvorming:Agenda ;
+      dct:hasPart ?agendaItem .
+    ?agendaItem a besluit:Agendapunt ;
+      ext:wordtGetoondAlsMededeling "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> ;
+      ext:toonInKortBestek "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+    FILTER NOT EXISTS { ?otherAgenda prov:wasRevisionOf ?agenda }
+    FILTER NOT EXISTS { # Doesn't have tratment with newsletterinfo attached
+      ?treatment a besluitvorming:BehandelingVanAgendapunt ;
+        prov:generates ?nli ;
+        besluitvorming:heeftOnderwerp ?agendaItem .
+    }
+  }
+}

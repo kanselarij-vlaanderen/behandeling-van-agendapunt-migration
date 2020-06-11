@@ -1,0 +1,22 @@
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+DELETE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaItem ext:nieuwsbriefInfo ?nli .
+  }
+}
+INSERT {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?treatment prov:generates ?nli .
+  }
+}
+WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?treatment besluitvorming:heeftOnderwerp ?agendaItem .
+    ?agendaItem a besluit:Agendapunt ;
+      ext:nieuwsbriefInfo ?nli .
+  }
+}
