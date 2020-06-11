@@ -111,6 +111,9 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
     }
   }
   // TODO: distribute new "behandelingen" to other graphs
+  console.log('Attaching treatment activities to subcase');
+  const attachToSubcaseQuery = queries.constructAttachTreatmentsToSubcase(KANSELARIJ_GRAPH);
+  await update(attachToSubcaseQuery);
 
   console.log('Link legacy "nieuwsbriefInfos" of announcements to "behandeling"');
   console.log(`Running for graph <${KANSELARIJ_GRAPH}>`);
