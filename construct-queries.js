@@ -94,6 +94,12 @@ function constructSelectNliForAnnouncementsQuery (agendaItemUri, graph) {
   query = query.replaceAll('# AGENDAITEM_PLACEHOLDER', sparqlEscapeUri(agendaItemUri));
   return query;
 }
+function constructMigrateStatusCodeQuery (graph) {
+  const p = path.resolve(__dirname, './queries/10-decision-resul-code-migration.sparql');
+  let query = fs.readFileSync(p, { encoding: 'utf8' });
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  return query;
+}
 
 export {
   constructListDecisionsQuery,
@@ -105,5 +111,6 @@ export {
   constructAttachTreatmentsToSubcase,
   constructAttachExistingNliQuery,
   constructSelectAnnouncementsWithoutNliQuery,
-  constructSelectNliForAnnouncementsQuery
+  constructSelectNliForAnnouncementsQuery,
+  constructMigrateStatusCodeQuery
 };

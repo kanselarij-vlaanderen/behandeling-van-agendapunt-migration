@@ -128,6 +128,11 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
     console.log(`Running for <${announcement}>`);
     await generateNliForAnnouncement(announcement);
   }
+
+  console.log("Migrate from true/false to result status code.");
+  const resultCodeStatusQueryString = queries.constructMigrateStatusCodeQuery(KANSELARIJ_GRAPH);
+  await update(resultCodeStatusQueryString);
+
   // TODO: Attach nli to other
   // TODO: distribute new "Newsletterinfo" to other graphs
 
