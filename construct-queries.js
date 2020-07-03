@@ -101,6 +101,13 @@ function constructMigrateStatusCodeQuery (graph) {
   return query;
 }
 
+function constructDateMigrationQuery(graph) {
+  const p = path.resolve(__dirname, './queries/11-treatements-date-types.sparql');
+  let query = fs.readFileSync(p, { encoding: 'utf8' });
+  query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
+  return query;
+}
+
 export {
   constructListDecisionsQuery,
   constructDecisionToTreatmentQuery,
@@ -112,5 +119,6 @@ export {
   constructAttachExistingNliQuery,
   constructSelectAnnouncementsWithoutNliQuery,
   constructSelectNliForAnnouncementsQuery,
-  constructMigrateStatusCodeQuery
+  constructMigrateStatusCodeQuery,
+  constructDateMigrationQuery
 };

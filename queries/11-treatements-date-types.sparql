@@ -1,0 +1,24 @@
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+DELETE{
+    GRAPH # GRAPH_PLACEHOLDER {
+         ?treat <http://purl.org/dc/terms/created> ?date.
+    }
+}
+INSERT {
+    GRAPH # GRAPH_PLACEHOLDER {
+         ?treat <http://purl.org/dc/terms/created> ?dateTime .
+    }
+} WHERE{
+   GRAPH # GRAPH_PLACEHOLDER {
+        SELECT DISTINCT (xsd:dateTime(?date) as ?dateTime), ?treat, ?date WHERE {
+            GRAPH # GRAPH_PLACEHOLDER {
+                    ?treat a besluit:BehandelingVanAgendapunt.
+                    ?treat <http://purl.org/dc/terms/created> ?date.
+            }
+        }
+   }
+}
+;

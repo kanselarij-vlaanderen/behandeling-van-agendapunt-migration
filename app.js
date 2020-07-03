@@ -133,6 +133,10 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
   const resultCodeStatusQueryString = queries.constructMigrateStatusCodeQuery(KANSELARIJ_GRAPH);
   await update(resultCodeStatusQueryString);
 
+  console.log('migrate created DATE to DTATIME');
+  const datemigrationquerystring = queries.constructDateMigrationQuery(KANSELARIJ_GRAPH);
+  await update(datemigrationquerystring);
+
   // TODO: Attach nli to other
   // TODO: distribute new "Newsletterinfo" to other graphs
 
