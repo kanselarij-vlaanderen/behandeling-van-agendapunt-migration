@@ -8,6 +8,7 @@ DELETE {
     ?decision a besluit:Besluit .
     ?decision ext:beslissingsfiche ?bf .
     ?decision eli:title_short ?tit .
+    ?decision ext:htmlInhoud ?content .
     ?decision besluitvorming:gearchiveerd ?arch .
     ?decision besluitvorming:stuknummerVP ?svp .
     ?decision besluitvorming:stuknummerVR ?svr .
