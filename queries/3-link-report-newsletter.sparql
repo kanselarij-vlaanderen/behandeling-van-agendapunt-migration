@@ -29,3 +29,5 @@ WHERE {
     # VALUES_PLACEHOLDER
   }
 }
+
+; Check met michael of de vindtPlaatsTijdens niet omgedraaid moet worden.
