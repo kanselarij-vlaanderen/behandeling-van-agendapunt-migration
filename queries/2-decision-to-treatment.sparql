@@ -17,7 +17,7 @@ DELETE {
 INSERT {
   GRAPH # GRAPH_PLACEHOLDER {
     ?decision a besluit:BehandelingVanAgendapunt . 
-    ?bf besluitvorming:beschrijft ?decision .
+    ?bf besluitvorming:genereertVerslag ?decision .
   }
 }
 WHERE {
