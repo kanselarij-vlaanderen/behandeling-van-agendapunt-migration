@@ -48,7 +48,7 @@ async function createTreatmentsBatch (batchSize, graph) {
     const behandelingUuid = uuid();
     const behandelingUri = BEHANDELING_BASE_URI + behandelingUuid;
     behandelingTriples = behandelingTriples.concat([
-      { s: sparqlEscapeUri(behandelingUri), p: 'a', o: sparqlEscapeUri('http://data.vlaanderen.be/ns/besluitvorming#BehandelingVanAgendapunt') },
+      { s: sparqlEscapeUri(behandelingUri), p: 'a', o: sparqlEscapeUri('http://data.vlaanderen.be/ns/belsuit#BehandelingVanAgendapunt') },
       { s: sparqlEscapeUri(behandelingUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/core/uuid'), o: sparqlEscapeString(behandelingUuid) },
       { s: sparqlEscapeUri(behandelingUri), p: sparqlEscapeUri('http://data.vlaanderen.be/ns/besluitvorming#heeftOnderwerp'), o: sparqlEscapeUri(med) }
     ]);

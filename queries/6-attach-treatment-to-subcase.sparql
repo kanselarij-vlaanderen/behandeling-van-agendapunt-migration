@@ -15,5 +15,6 @@ WHERE {
     ?subcase besluitvorming:isGeagendeerdVia ?agendaItem .
     ?subcase a dbpedia:UnitOfWork .
     ?treatment besluitvorming:heeftOnderwerp ?agendaItem .
+    ?treatment a besluit:BehandelingVanAgendapunt .
   }
 }

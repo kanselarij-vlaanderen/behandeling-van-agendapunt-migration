@@ -14,7 +14,7 @@ WHERE {
       ext:toonInKortBestek "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
     FILTER NOT EXISTS { ?otherAgenda prov:wasRevisionOf ?agenda }
     FILTER NOT EXISTS { # Doesn't have tratment with newsletterinfo attached
-      ?treatment a besluitvorming:BehandelingVanAgendapunt ;
+      ?treatment a besluit:BehandelingVanAgendapunt ;
         prov:generates ?nli ;
         besluitvorming:heeftOnderwerp ?agendaItem .
     }
