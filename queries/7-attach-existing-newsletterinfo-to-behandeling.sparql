@@ -10,7 +10,7 @@ DELETE {
 }
 INSERT {
   GRAPH # GRAPH_PLACEHOLDER {
-    ?treatment prov:generates ?nli .
+    ?treatment prov:generated ?nli .
   }
 }
 WHERE {
