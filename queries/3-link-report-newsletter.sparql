@@ -20,14 +20,14 @@ WHERE {
   GRAPH # GRAPH_PLACEHOLDER {
     ?behandeling a besluit:BehandelingVanAgendapunt . 
     ?ap a besluit:Agendapunt .
-    ?ps a dbpedia:UnitOfWork ;
-          ^besluitvorming:vindtPlaatsTijdens / besluitvorming:genereertAgendapunt ?ap;
-      ext:procedurestapHeeftBesluit ?behandeling .
+    ?ps a dbpedia:UnitOfWork .
+    ?agendering a besluitvorming:Agendering ;
+      besluitvorming:vindtPlaatsTijdens ?ps ;
+      besluitvorming:genereertAgendapunt ?ap .
+    ?ps ext:procedurestapHeeftBesluit ?behandeling .
     OPTIONAL { ?ps prov:generated ?nli }
   }
   VALUES ?behandeling {
     # VALUES_PLACEHOLDER
   }
 }
-
-; Check met michael of de vindtPlaatsTijdens niet omgedraaid moet worden.
