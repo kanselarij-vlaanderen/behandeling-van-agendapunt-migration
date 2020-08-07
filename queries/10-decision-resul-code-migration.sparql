@@ -1,38 +1,38 @@
-PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX brc: <http://kanselarij.vo.data.gift/id/concept/beslissings-resultaat-codes/>
-PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
 PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
 
-DELETE{
-GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment besluitvorming:goedgekeurd "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+DELETE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaTreatment besluitvorming:goedgekeurd "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
   }
 }
 INSERT {
-GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment besluitvorming:resultaat brc:56312c4b-9d2a-4735-b0b1-2ff14bb524fd .
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaTreatment besluitvorming:resultaat brc:56312c4b-9d2a-4735-b0b1-2ff14bb524fd .
   }
-} WHERE{
-GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment a besluit:BehandelingVanAgendapunt ;
-    besluitvorming:goedgekeurd "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+}
+WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaTreatment a besluit:BehandelingVanAgendapunt ;
+      besluitvorming:goedgekeurd "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
   }
 }
 ;
 
-DELETE{
-GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment besluitvorming:goedgekeurd "false"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+DELETE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaTreatment besluitvorming:goedgekeurd "false"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
   }
 }
 INSERT {
-GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment besluitvorming:resultaat brc:a29b3ffd-0839-45cb-b8f4-e1760f7aacaa .
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaTreatment besluitvorming:resultaat brc:a29b3ffd-0839-45cb-b8f4-e1760f7aacaa .
   }
-} WHERE{
-GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment a besluit:BehandelingVanAgendapunt ;
-     besluitvorming:goedgekeurd "false"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+}
+WHERE {
+  GRAPH # GRAPH_PLACEHOLDER {
+    ?agendaTreatment a besluit:BehandelingVanAgendapunt ;
+       besluitvorming:goedgekeurd "false"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
   }
 }
