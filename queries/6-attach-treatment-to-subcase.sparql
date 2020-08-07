@@ -1,7 +1,5 @@
-PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
 PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
-PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX dbpedia: <http://dbpedia.org/ontology/>
 
 INSERT {
@@ -12,9 +10,11 @@ INSERT {
 WHERE {
   GRAPH # GRAPH_PLACEHOLDER {
     ?agendaItem a besluit:Agendapunt .
-    ?subcase besluitvorming:isGeagendeerdVia ?agendaItem .
     ?subcase a dbpedia:UnitOfWork .
-    ?treatment besluitvorming:heeftOnderwerp ?agendaItem .
-    ?treatment a besluit:BehandelingVanAgendapunt .
+    ?agendering a besluitvorming:Agendering ;
+      besluitvorming:vindtPlaatsTijdens ?subcase ;
+      besluitvorming:genereertAgendapunt ?agendaItem .
+    ?treatment a besluit:BehandelingVanAgendapunt ;
+      besluitvorming:heeftOnderwerp ?agendaItem .
   }
 }

@@ -8,8 +8,12 @@ SELECT ?agendaItem WHERE {
   GRAPH # GRAPH_PLACEHOLDER {
     ?agendaItem a besluit:Agendapunt ;
       ext:wordtGetoondAlsMededeling "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
-    FILTER NOT EXISTS { ?ps besluitvorming:isGeagendeerdVia ?agendaItem }
-    FILTER NOT EXISTS { ?treatment besluitvorming:heeftOnderwerp ?agendaItem } # Has no treatment
+    FILTER NOT EXISTS {
+      ?agendering a besluitvorming:Agendering ;
+        besluitvorming:vindtPlaatsTijdens ?ps ;
+        besluitvorming:genereertAgendapunt ?agendaItem .
+    }
+    FILTER NOT EXISTS { ?treatment besluitvorming:heeftOnderwerp ?agendaItem } # Has no treatment yet
     # Below part for assuring to only select last version of item over all agenda versions.
     ?agenda a besluitvorming:Agenda ;
       dct:hasPart ?agendaItem .
