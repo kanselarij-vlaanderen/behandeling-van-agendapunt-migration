@@ -13,7 +13,7 @@ DELETE {
 INSERT {
   GRAPH # GRAPH_PLACEHOLDER {
     ?behandeling besluitvorming:heeftOnderwerp ?ap . # TODO: Ook stappen die 2 maal geagendeerd zijn (uitstel) hebben nu zelfde behandeling
-    ?behandeling prov:generated ?nli . # More specific predicate than generates?
+    ?behandeling prov:generated ?nli .
   }
 }
 WHERE {
