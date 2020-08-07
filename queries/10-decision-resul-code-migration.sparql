@@ -15,7 +15,8 @@ GRAPH # GRAPH_PLACEHOLDER {
   }
 } WHERE{
 GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment besluitvorming:goedgekeurd "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+  ?agendaTreatment a besluit:BehandelingVanAgendapunt ;
+    besluitvorming:goedgekeurd "true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
   }
 }
 ;
@@ -31,6 +32,7 @@ GRAPH # GRAPH_PLACEHOLDER {
   }
 } WHERE{
 GRAPH # GRAPH_PLACEHOLDER {
-  ?agendaTreatment besluitvorming:goedgekeurd "false"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
+  ?agendaTreatment a besluit:BehandelingVanAgendapunt ;
+     besluitvorming:goedgekeurd "false"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean> .
   }
 }
