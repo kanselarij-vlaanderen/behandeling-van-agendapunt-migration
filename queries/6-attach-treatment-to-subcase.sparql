@@ -4,7 +4,7 @@ PREFIX dbpedia: <http://dbpedia.org/ontology/>
 
 INSERT {
   GRAPH # GRAPH_PLACEHOLDER {
-    ?subcase besluitvorming:vindtPlaatsTijdens ?treatment.
+    ?treatment besluitvorming:vindtPlaatsTijdens ?subcase .
   }
 }
 WHERE {
