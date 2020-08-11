@@ -1,10 +1,11 @@
 PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
 PREFIX besluitvorming: <http://data.vlaanderen.be/ns/besluitvorming#>
 PREFIX dbpedia: <http://dbpedia.org/ontology/>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
 INSERT {
   GRAPH # GRAPH_PLACEHOLDER {
-    ?treatment besluitvorming:beslissingVindtPlaatsTijdens ?subcase .
+    ?treatment ext:beslissingVindtPlaatsTijdens ?subcase .
   }
 }
 WHERE {
