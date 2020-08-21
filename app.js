@@ -20,7 +20,6 @@ const GRAPHS = [
 ];
 
 const KANSELARIJ_GRAPH = GRAPHS[0];
-const SECONDARY_GRAPHS = GRAPHS.slice(1);
 const BEHANDELING_BASE_URI = 'http://kanselarij.vo.data.gift/id/behandelingen-van-agendapunt/';
 const NLI_BASE_URI = 'http://kanselarij.vo.data.gift/id/nieuwsbrief-infos/';
 
@@ -87,21 +86,18 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
 
 (async function () {
   console.log('Convert "beslissing" to BehandelingVanAgendapunt');
-  for (const g of GRAPHS) {
-    console.log(`Running for graph <${g}>`);
-    let i = 1;
-    while (true) {
-      console.log(`Batch ${i} ...`);
-      const treatments = await decisionToTreatmentBatch(BATCH_SIZE, g);
-      i++;
-      if (treatments.length < BATCH_SIZE) {
-        break;
-      }
+  let i = 1;
+  while (true) {
+    console.log(`Batch ${i} ...`);
+    const treatments = await decisionToTreatmentBatch(BATCH_SIZE, KANSELARIJ_GRAPH);
+    i++;
+    if (treatments.length < BATCH_SIZE) {
+      break;
     }
   }
 
   console.log('Find "mededelingen" without subcase. Create "BehandelingVanAgendapunt" for them as well.');
-  let i = 1;
+  i = 1;
   while (true) {
     console.log(`Batch ${i} ...`);
     const mededelingen = await createTreatmentsBatch(BATCH_SIZE, KANSELARIJ_GRAPH);
@@ -116,7 +112,6 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
   await update(attachToSubcaseQuery);
 
   console.log('Link legacy "nieuwsbriefInfos" of announcements to "behandeling"');
-  console.log(`Running for graph <${KANSELARIJ_GRAPH}>`);
   const existingNliQueryString = queries.constructAttachExistingNliQuery(KANSELARIJ_GRAPH);
   await update(existingNliQueryString);
 
@@ -138,7 +133,5 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
   await update(datemigrationquerystring);
 
   // TODO: Attach nli to other
-  // TODO: distribute new "Newsletterinfo" to other graphs
-
-  console.log('Done running migrations!');
+  console.log("Done running migrations! Don't forget to re-run Yggdrasil for fixing data in all graphs");
 }());
