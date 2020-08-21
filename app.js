@@ -124,7 +124,7 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
     await generateNliForAnnouncement(announcement);
   }
 
-  console.log("Migrate from true/false to result status code.");
+  console.log('Migrate from true/false to result status code.');
   const resultCodeStatusQueryString = queries.constructMigrateStatusCodeQuery(KANSELARIJ_GRAPH);
   await update(resultCodeStatusQueryString);
 
