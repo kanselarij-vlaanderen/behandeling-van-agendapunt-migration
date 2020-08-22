@@ -30,7 +30,7 @@ function constructLinkReportNewsletterQuery (graph, decisionUris) {
   return query;
 }
 
-function constructListMededelingenQuery (batchSize, graph) {
+function constructListWithouTreatmentQuery (batchSize, graph) {
   const p = path.resolve(__dirname, './queries/4-list-items-without-treatment.sparql');
   let query = fs.readFileSync(p, { encoding: 'utf8' });
   query = query.replace('# LIMIT_PLACEHOLDER', batchSize);

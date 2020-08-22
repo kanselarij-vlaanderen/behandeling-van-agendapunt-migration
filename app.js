@@ -39,11 +39,11 @@ async function decisionToTreatmentBatch (batchSize, graph) {
 }
 
 async function createTreatmentsBatch (batchSize, graph) {
-  const listMededelingenQuery = queries.constructListMededelingenQuery(batchSize, graph);
-  const queryResult = parseSparqlResults(await query(listMededelingenQuery));
-  const mededelingenUris = queryResult.map((r) => r.agendaItem);
+  const listItemsQuery = queries.constructListWithouTreatmentQuery(batchSize, graph);
+  const queryResult = parseSparqlResults(await query(listItemsQuery));
+  const itemUris = queryResult.map((r) => r.agendaItem);
   let behandelingTriples = [];
-  for (const med of mededelingenUris) {
+  for (const med of itemUris) {
     const behandelingUuid = uuid();
     const behandelingUri = BEHANDELING_BASE_URI + behandelingUuid;
     behandelingTriples = behandelingTriples.concat([
@@ -55,10 +55,10 @@ async function createTreatmentsBatch (batchSize, graph) {
   if (behandelingTriples.length) {
     const queryString = queries.constructInsertTriplesQuery(graph, behandelingTriples);
     await update(queryString);
-    const attachOtherVersionsQuery = queries.constructAttachTreatmentToOtherItemVersionsQuery(graph, mededelingenUris);
+    const attachOtherVersionsQuery = queries.constructAttachTreatmentToOtherItemVersionsQuery(graph, itemUris);
     await update(attachOtherVersionsQuery);
   }
-  return mededelingenUris;
+  return itemUris;
 }
 
 async function generateNliForAnnouncement (announcement) {
