@@ -39,7 +39,7 @@ async function decisionToTreatmentBatch (batchSize, graph) {
 }
 
 async function createTreatmentsBatch (batchSize, graph) {
-  const listItemsQuery = queries.constructListWithouTreatmentQuery(batchSize, graph);
+  const listItemsQuery = queries.constructListWithoutTreatmentQuery(batchSize, graph);
   const queryResult = parseSparqlResults(await query(listItemsQuery));
   const itemUris = queryResult.map((r) => r.agendaItem);
   let behandelingTriples = [];
