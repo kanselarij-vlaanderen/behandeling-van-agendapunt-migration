@@ -96,7 +96,7 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
     }
   }
 
-  console.log('Find "mededelingen" without subcase. Create "BehandelingVanAgendapunt" for them as well.');
+  console.log('Find agenda-items without "BehandelingVanAgendapunt". Create "BehandelingVanAgendapunt" for them as well.');
   i = 1;
   while (true) {
     console.log(`Batch ${i} ...`);
@@ -107,11 +107,11 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
     }
   }
   // TODO: distribute new "behandelingen" to other graphs
-  console.log('Attaching treatment activities to subcase');
+  console.log('Attaching treatment (/decision) activities to subcase');
   const attachToSubcaseQuery = queries.constructAttachTreatmentsToSubcase(KANSELARIJ_GRAPH);
   await update(attachToSubcaseQuery);
 
-  console.log('Link legacy "nieuwsbriefInfos" of announcements to "behandeling"');
+  console.log('Link legacy "nieuwsbriefInfos" of announcements to treatment');
   const existingNliQueryString = queries.constructAttachExistingNliQuery(KANSELARIJ_GRAPH);
   await update(existingNliQueryString);
 
@@ -119,6 +119,7 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
   const queryString = queries.constructSelectAnnouncementsWithoutNliQuery(KANSELARIJ_GRAPH);
   const announcementsWithoutNli = parseSparqlResults(await query(queryString));
   const mededelingenUris = announcementsWithoutNli.map((r) => r.agendaItem);
+  console.log(`Found ${mededelingenUris.length}`);
   for (const announcement of mededelingenUris) {
     console.log(`Running for <${announcement}>`);
     await generateNliForAnnouncement(announcement);
