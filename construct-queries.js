@@ -31,7 +31,7 @@ function constructLinkReportNewsletterQuery (graph, decisionUris) {
 }
 
 function constructListMededelingenQuery (batchSize, graph) {
-  const p = path.resolve(__dirname, './queries/4-list-mededelingen-without-subcase.sparql');
+  const p = path.resolve(__dirname, './queries/4-list-items-without-treatment.sparql');
   let query = fs.readFileSync(p, { encoding: 'utf8' });
   query = query.replace('# LIMIT_PLACEHOLDER', batchSize);
   query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
