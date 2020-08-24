@@ -12,7 +12,7 @@ SELECT ?agendaItem WHERE {
     ?agenda a besluitvorming:Agenda ;
       dct:hasPart ?agendaItem .
     FILTER NOT EXISTS { ?otherAgenda prov:wasRevisionOf ?agenda }
-    FILTER NOT EXISTS { ?itemVersion ext:replacesPrevious ?agendaItem } # Extra security
+    # FILTER NOT EXISTS { ?itemVersion ext:replacesPrevious ?agendaItem } # Extra security. Commented out. Existing data for this predicate isn't accurate
   }
 }
 LIMIT # LIMIT_PLACEHOLDER
