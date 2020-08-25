@@ -74,6 +74,7 @@ async function generateNliForAnnouncement (announcement) {
     { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/core/uuid'), o: sparqlEscapeString(nliUuid) },
     { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://purl.org/dc/terms/title'), o: sparqlEscapeString(title) },
     { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/ext/htmlInhoud'), o: sparqlEscapeString(content) }
+    { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/ext/inNieuwsbrief'), o: "\"true\"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean>" }
     // TODO KAS-1420 : What about "priority" and "category"(nota/mededeling)? See Valvas-export-service
   ];
   const queryString = queries.constructInsertTriplesQuery(KANSELARIJ_GRAPH, nliTriples);
