@@ -61,7 +61,7 @@ async function createTreatmentsBatch (batchSize, graph) {
   return itemUris;
 }
 
-async function generateNliForAnnouncement (announcement) {
+async function generateNliForAnnouncement (announcement, treatment) {
   const nliQueryString = queries.constructSelectNliForAnnouncementsQuery(announcement, KANSELARIJ_GRAPH);
   const announcementInfo = parseSparqlResults(await query(nliQueryString))[0];
   const nliUuid = uuid();
@@ -70,6 +70,7 @@ async function generateNliForAnnouncement (announcement) {
   const content = announcementInfo.title || '';
   // TODO KAS-1420 : title & content will have same "content" when shortTitle doesn't exist and title does.
   const nliTriples = [
+    { s: sparqlEscapeUri(treatment), p: sparqlEscapeUri('http://www.w3.org/ns/prov#generated'), o: sparqlEscapeUri(nliUri) },
     { s: sparqlEscapeUri(nliUri), p: 'a', o: sparqlEscapeUri('http://data.vlaanderen.be/ns/besluitvorming#NieuwsbriefInfo') },
     { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/core/uuid'), o: sparqlEscapeString(nliUuid) },
     { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://purl.org/dc/terms/title'), o: sparqlEscapeString(title) },
@@ -119,11 +120,11 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
   console.log('Find "mededelingen" without Newsletter-info object, that nonetheless SHOULD appear in the newsletter');
   const queryString = queries.constructSelectAnnouncementsWithoutNliQuery(KANSELARIJ_GRAPH);
   const announcementsWithoutNli = parseSparqlResults(await query(queryString));
-  const mededelingenUris = announcementsWithoutNli.map((r) => r.agendaItem);
-  console.log(`Found ${mededelingenUris.length}`);
-  for (const announcement of mededelingenUris) {
-    console.log(`Running for <${announcement}>`);
-    await generateNliForAnnouncement(announcement);
+  console.log(`Found ${announcementsWithoutNli.length}`);
+  for (const item of announcementsWithoutNli) {
+    const { agendaItem, treatment } = item;
+    console.log(`Running for <${agendaItem}>`);
+    await generateNliForAnnouncement(agendaItem, treatment);
   }
 
   console.log('Migrate from true/false to result status code.');
