@@ -7,11 +7,11 @@ DELETE {
   GRAPH # GRAPH_PLACEHOLDER {
     ?decision a besluit:Besluit .
     ?decision ext:beslissingsfiche ?bf .
-    ?decision eli:title_short ?tit .
-    ?decision ext:htmlInhoud ?content .
-    ?decision besluitvorming:gearchiveerd ?arch .
-    ?decision besluitvorming:stuknummerVP ?svp .
-    ?decision besluitvorming:stuknummerVR ?svr .
+    ?decision eli:title_short ?tit . # unused
+    ?decision ext:htmlInhoud ?content . # unused
+    ?decision besluitvorming:gearchiveerd ?arch . # unused
+    ?decision besluitvorming:stuknummerVP ?svp . # unused
+    ?decision besluitvorming:stuknummerVR ?svr . # unused
   }
 }
 INSERT {

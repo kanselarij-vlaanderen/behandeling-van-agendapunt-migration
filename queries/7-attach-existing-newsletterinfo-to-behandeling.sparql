@@ -17,6 +17,6 @@ WHERE {
   GRAPH # GRAPH_PLACEHOLDER {
     ?treatment besluitvorming:heeftOnderwerp ?agendaItem .
     ?agendaItem a besluit:Agendapunt ;
-      ext:nieuwsbriefInfo ?nli .
+      ext:nieuwsbriefInfo ?nli . # Temporary link, put in after DORIS legacy migration
   }
 }

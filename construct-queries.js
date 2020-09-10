@@ -30,8 +30,8 @@ function constructLinkReportNewsletterQuery (graph, decisionUris) {
   return query;
 }
 
-function constructListMededelingenQuery (batchSize, graph) {
-  const p = path.resolve(__dirname, './queries/4-list-mededelingen-without-subcase.sparql');
+function constructListWithoutTreatmentQuery (batchSize, graph) {
+  const p = path.resolve(__dirname, './queries/4-list-items-without-treatment.sparql');
   let query = fs.readFileSync(p, { encoding: 'utf8' });
   query = query.replace('# LIMIT_PLACEHOLDER', batchSize);
   query = query.replaceAll('# GRAPH_PLACEHOLDER', sparqlEscapeUri(graph));
@@ -112,7 +112,7 @@ export {
   constructListDecisionsQuery,
   constructDecisionToTreatmentQuery,
   constructLinkReportNewsletterQuery,
-  constructListMededelingenQuery,
+  constructListWithoutTreatmentQuery,
   constructAttachTreatmentToOtherItemVersionsQuery,
   constructInsertTriplesQuery,
   constructAttachTreatmentsToSubcase,

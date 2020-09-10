@@ -12,7 +12,7 @@ WHERE {
   GRAPH # GRAPH_PLACEHOLDER {
     ?itemVersion a besluit:Agendapunt .
     ?treatment besluitvorming:heeftOnderwerp ?agendaItem .
-    ?agendaItem ext:previousVersion+ ?itemVersion .
+    ?agendaItem ext:replacesPrevious+ ?itemVersion .
   }
   VALUES ?agendaItem {
     # AGENDAITEM_PLACEHOLDER

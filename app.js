@@ -20,7 +20,6 @@ const GRAPHS = [
 ];
 
 const KANSELARIJ_GRAPH = GRAPHS[0];
-const SECONDARY_GRAPHS = GRAPHS.slice(1);
 const BEHANDELING_BASE_URI = 'http://kanselarij.vo.data.gift/id/behandelingen-van-agendapunt/';
 const NLI_BASE_URI = 'http://kanselarij.vo.data.gift/id/nieuwsbrief-infos/';
 
@@ -40,11 +39,11 @@ async function decisionToTreatmentBatch (batchSize, graph) {
 }
 
 async function createTreatmentsBatch (batchSize, graph) {
-  const listMededelingenQuery = queries.constructListMededelingenQuery(batchSize, graph);
-  const queryResult = parseSparqlResults(await query(listMededelingenQuery));
-  const mededelingenUris = queryResult.map((r) => r.agendaItem);
+  const listItemsQuery = queries.constructListWithoutTreatmentQuery(batchSize, graph);
+  const queryResult = parseSparqlResults(await query(listItemsQuery));
+  const itemUris = queryResult.map((r) => r.agendaItem);
   let behandelingTriples = [];
-  for (const med of mededelingenUris) {
+  for (const med of itemUris) {
     const behandelingUuid = uuid();
     const behandelingUri = BEHANDELING_BASE_URI + behandelingUuid;
     behandelingTriples = behandelingTriples.concat([
@@ -56,13 +55,13 @@ async function createTreatmentsBatch (batchSize, graph) {
   if (behandelingTriples.length) {
     const queryString = queries.constructInsertTriplesQuery(graph, behandelingTriples);
     await update(queryString);
-    const attachOtherVersionsQuery = queries.constructAttachTreatmentToOtherItemVersionsQuery(graph, mededelingenUris);
+    const attachOtherVersionsQuery = queries.constructAttachTreatmentToOtherItemVersionsQuery(graph, itemUris);
     await update(attachOtherVersionsQuery);
   }
-  return mededelingenUris;
+  return itemUris;
 }
 
-async function generateNliForAnnouncement (announcement) {
+async function generateNliForAnnouncement (announcement, treatment) {
   const nliQueryString = queries.constructSelectNliForAnnouncementsQuery(announcement, KANSELARIJ_GRAPH);
   const announcementInfo = parseSparqlResults(await query(nliQueryString))[0];
   const nliUuid = uuid();
@@ -71,10 +70,12 @@ async function generateNliForAnnouncement (announcement) {
   const content = announcementInfo.title || '';
   // TODO KAS-1420 : title & content will have same "content" when shortTitle doesn't exist and title does.
   const nliTriples = [
+    { s: sparqlEscapeUri(treatment), p: sparqlEscapeUri('http://www.w3.org/ns/prov#generated'), o: sparqlEscapeUri(nliUri) },
     { s: sparqlEscapeUri(nliUri), p: 'a', o: sparqlEscapeUri('http://data.vlaanderen.be/ns/besluitvorming#NieuwsbriefInfo') },
     { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/core/uuid'), o: sparqlEscapeString(nliUuid) },
     { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://purl.org/dc/terms/title'), o: sparqlEscapeString(title) },
-    { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/ext/htmlInhoud'), o: sparqlEscapeString(content) }
+    { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/ext/htmlInhoud'), o: sparqlEscapeString(content) },
+    { s: sparqlEscapeUri(nliUri), p: sparqlEscapeUri('http://mu.semte.ch/vocabularies/ext/inNieuwsbrief'), o: '"true"^^<http://mu.semte.ch/vocabularies/typed-literals/boolean>' }
     // TODO KAS-1420 : What about "priority" and "category"(nota/mededeling)? See Valvas-export-service
   ];
   const queryString = queries.constructInsertTriplesQuery(KANSELARIJ_GRAPH, nliTriples);
@@ -87,21 +88,18 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
 
 (async function () {
   console.log('Convert "beslissing" to BehandelingVanAgendapunt');
-  for (const g of GRAPHS) {
-    console.log(`Running for graph <${g}>`);
-    let i = 1;
-    while (true) {
-      console.log(`Batch ${i} ...`);
-      const treatments = await decisionToTreatmentBatch(BATCH_SIZE, g);
-      i++;
-      if (treatments.length < BATCH_SIZE) {
-        break;
-      }
+  let i = 1;
+  while (true) {
+    console.log(`Batch ${i} ...`);
+    const treatments = await decisionToTreatmentBatch(BATCH_SIZE, KANSELARIJ_GRAPH);
+    i++;
+    if (treatments.length < BATCH_SIZE) {
+      break;
     }
   }
 
-  console.log('Find "mededelingen" without subcase. Create "BehandelingVanAgendapunt" for them as well.');
-  let i = 1;
+  console.log('Find agenda-items without "BehandelingVanAgendapunt". Create "BehandelingVanAgendapunt" for them as well.');
+  i = 1;
   while (true) {
     console.log(`Batch ${i} ...`);
     const mededelingen = await createTreatmentsBatch(BATCH_SIZE, KANSELARIJ_GRAPH);
@@ -111,25 +109,25 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
     }
   }
   // TODO: distribute new "behandelingen" to other graphs
-  console.log('Attaching treatment activities to subcase');
+  console.log('Attaching treatment (/decision) activities to subcase');
   const attachToSubcaseQuery = queries.constructAttachTreatmentsToSubcase(KANSELARIJ_GRAPH);
   await update(attachToSubcaseQuery);
 
-  console.log('Link legacy "nieuwsbriefInfos" of announcements to "behandeling"');
-  console.log(`Running for graph <${KANSELARIJ_GRAPH}>`);
+  console.log('Link legacy "nieuwsbriefInfos" of announcements to treatment');
   const existingNliQueryString = queries.constructAttachExistingNliQuery(KANSELARIJ_GRAPH);
   await update(existingNliQueryString);
 
   console.log('Find "mededelingen" without Newsletter-info object, that nonetheless SHOULD appear in the newsletter');
   const queryString = queries.constructSelectAnnouncementsWithoutNliQuery(KANSELARIJ_GRAPH);
   const announcementsWithoutNli = parseSparqlResults(await query(queryString));
-  const mededelingenUris = announcementsWithoutNli.map((r) => r.agendaItem);
-  for (const announcement of mededelingenUris) {
-    console.log(`Running for <${announcement}>`);
-    await generateNliForAnnouncement(announcement);
+  console.log(`Found ${announcementsWithoutNli.length}`);
+  for (const item of announcementsWithoutNli) {
+    const { agendaItem, treatment } = item;
+    console.log(`Running for <${agendaItem}>`);
+    await generateNliForAnnouncement(agendaItem, treatment);
   }
 
-  console.log("Migrate from true/false to result status code.");
+  console.log('Migrate from true/false to result status code.');
   const resultCodeStatusQueryString = queries.constructMigrateStatusCodeQuery(KANSELARIJ_GRAPH);
   await update(resultCodeStatusQueryString);
 
@@ -138,7 +136,5 @@ const BATCH_SIZE = (process.env.BATCH_SIZE && parseInt(process.env.BATCH_SIZE)) 
   await update(datemigrationquerystring);
 
   // TODO: Attach nli to other
-  // TODO: distribute new "Newsletterinfo" to other graphs
-
-  console.log('Done running migrations!');
+  console.log("Done running migrations! Don't forget to re-run Yggdrasil for fixing data in all graphs");
 }());
